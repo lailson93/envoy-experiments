@@ -1,0 +1,41 @@
+version: "3.2"
+networks:
+  mynetwork:
+    driver: bridge
+
+services:
+  envoy:
+    # image: envoyproxy/envoy:v1.22.4
+    image: envoyproxy/envoy-dev:15d8b93608bc5e28569f8b042ae666a5b09b87e9
+    ports: 
+      - 10000:10000
+      - 9901:9901
+    networks:
+      - mynetwork
+    volumes:
+      - ./envoy.yml:/etc/envoy/envoy.yaml
+    depends_on:
+      - nginx-webserver
+      - httpd-webserver
+      - httpd-webserver2
+
+  nginx-webserver:
+    image: nginx:latest
+    ports:
+      - 3030:80
+    networks:
+      - mynetwork
+
+  httpd-webserver:
+    image: httpd:latest
+    ports:
+      - 4040:80
+    networks:
+      - mynetwork
+
+  httpd-webserver2:
+    image: httpd:latest
+    ports:
+      - 5050:80
+    networks:
+      - mynetwork
